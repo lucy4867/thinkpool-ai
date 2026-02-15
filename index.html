@@ -558,6 +558,38 @@
         </div>
     </div>
 
+    <!-- AI 챗봇 -->
+    <button class="chatbot-toggle" id="chatbotToggle" onclick="toggleChatbot()">
+        <span class="chatbot-toggle-icon" id="chatbotToggleIcon">&#9672;</span>
+    </button>
+    <div class="chatbot-window" id="chatbotWindow">
+        <div class="chatbot-header">
+            <div class="chatbot-header-info">
+                <span class="chatbot-avatar">&#9672;</span>
+                <div>
+                    <div class="chatbot-name">Thinkpool AI 어시스턴트</div>
+                    <div class="chatbot-status">온라인</div>
+                </div>
+            </div>
+            <button class="chatbot-close" onclick="toggleChatbot()">&times;</button>
+        </div>
+        <div class="chatbot-messages" id="chatbotMessages">
+            <div class="chat-message bot">
+                <div class="chat-bubble">안녕하세요! Thinkpool AI 어시스턴트입니다. 무엇을 도와드릴까요?</div>
+            </div>
+            <div class="chat-suggestions" id="chatSuggestions">
+                <button onclick="sendSuggestion('사이트 소개해줘')">사이트 소개</button>
+                <button onclick="sendSuggestion('인기 게시글 알려줘')">인기 게시글</button>
+                <button onclick="sendSuggestion('추천 전자책')">추천 전자책</button>
+                <button onclick="sendSuggestion('머신러닝이란?')">머신러닝이란?</button>
+            </div>
+        </div>
+        <div class="chatbot-input">
+            <input type="text" id="chatInput" placeholder="메시지를 입력하세요..." onkeydown="if(event.key==='Enter')sendChat()">
+            <button onclick="sendChat()">&#10148;</button>
+        </div>
+    </div>
+
     <!-- 토스트 알림 -->
     <div class="toast-container" id="toastContainer"></div>
 

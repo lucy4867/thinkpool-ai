@@ -1355,6 +1355,163 @@ function importData(event) {
     event.target.value = '';
 }
 
+// ===== AI 챗봇 =====
+let chatbotOpen = false;
+
+function toggleChatbot() {
+    chatbotOpen = !chatbotOpen;
+    document.getElementById('chatbotWindow').classList.toggle('active', chatbotOpen);
+    document.getElementById('chatbotToggle').classList.toggle('active', chatbotOpen);
+    document.getElementById('chatbotToggleIcon').innerHTML = chatbotOpen ? '&times;' : '&#9672;';
+    if (chatbotOpen) {
+        document.getElementById('chatInput').focus();
+    }
+}
+
+function sendSuggestion(text) {
+    document.getElementById('chatInput').value = text;
+    sendChat();
+}
+
+function sendChat() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+
+    addChatMessage(text, 'user');
+    input.value = '';
+
+    // 추천 버튼 숨기기
+    const suggestions = document.getElementById('chatSuggestions');
+    if (suggestions) suggestions.style.display = 'none';
+
+    // 타이핑 표시
+    const messages = document.getElementById('chatbotMessages');
+    const typingDiv = document.createElement('div');
+    typingDiv.className = 'chat-message bot';
+    typingDiv.id = 'typingIndicator';
+    typingDiv.innerHTML = '<div class="chat-bubble"><div class="typing-indicator"><span></span><span></span><span></span></div></div>';
+    messages.appendChild(typingDiv);
+    messages.scrollTop = messages.scrollHeight;
+
+    setTimeout(() => {
+        const typing = document.getElementById('typingIndicator');
+        if (typing) typing.remove();
+        const response = generateBotResponse(text);
+        addChatMessage(response, 'bot');
+    }, 600 + Math.random() * 800);
+}
+
+function addChatMessage(text, type) {
+    const messages = document.getElementById('chatbotMessages');
+    const div = document.createElement('div');
+    div.className = `chat-message ${type}`;
+    div.innerHTML = `<div class="chat-bubble">${text}</div>`;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+function generateBotResponse(input) {
+    const q = input.toLowerCase();
+    const posts = getData('posts');
+    const ebooks = getData('ebooks');
+    const resources = getData('resources');
+
+    // 인사
+    if (q.match(/(안녕|하이|hello|hi|반가)/)) {
+        return '안녕하세요! Thinkpool AI 어시스턴트입니다. AI, 머신러닝, 딥러닝 등에 대해 궁금한 점을 물어보세요!';
+    }
+
+    // 사이트 소개
+    if (q.match(/(사이트|소개|뭐하는|어떤 곳)/)) {
+        return 'Thinkpool AI는 인공지능 기술을 함께 탐구하는 커뮤니티입니다.<br><br>&#128221; <b>게시판</b> - 질문, 정보 공유, 토론<br>&#128214; <b>전자책 스토어</b> - AI 관련 전자책<br>&#128194; <b>자료실</b> - 논문, 코드, 데이터셋 공유<br><br>좌측 메뉴에서 각 기능을 이용해보세요!';
+    }
+
+    // 인기 게시글
+    if (q.match(/(인기|게시글|최신|글)/)) {
+        if (posts.length === 0) return '아직 등록된 게시글이 없습니다. 첫 번째 글을 작성해보세요!';
+        const top = [...posts].sort((a, b) => b.views - a.views).slice(0, 3);
+        let resp = '&#128293; <b>인기 게시글 TOP 3</b><br><br>';
+        top.forEach((p, i) => {
+            resp += `${i + 1}. <b>${p.title}</b><br>&nbsp;&nbsp;&nbsp;조회 ${p.views} | 좋아요 ${p.likes}<br>`;
+        });
+        return resp;
+    }
+
+    // 추천 전자책
+    if (q.match(/(전자책|ebook|책 추천|추천 책|추천 전자책)/)) {
+        if (ebooks.length === 0) return '아직 등록된 전자책이 없습니다.';
+        const top = [...ebooks].sort((a, b) => b.rating - a.rating).slice(0, 3);
+        let resp = '&#128214; <b>추천 전자책</b><br><br>';
+        top.forEach((e, i) => {
+            resp += `${i + 1}. <b>${e.title}</b> - ${e.author}<br>&nbsp;&nbsp;&nbsp;평점 ${e.rating} | ${e.price > 0 ? e.price.toLocaleString() + '원' : '무료'}<br>`;
+        });
+        return resp;
+    }
+
+    // 머신러닝
+    if (q.match(/(머신러닝|machine learning|ml이란)/)) {
+        return '<b>머신러닝(Machine Learning)</b>은 데이터를 통해 패턴을 학습하고 예측하는 AI의 한 분야입니다.<br><br>&#128218; <b>주요 유형</b><br>- 지도학습: 라벨이 있는 데이터로 학습<br>- 비지도학습: 라벨 없이 패턴 발견<br>- 강화학습: 보상을 통해 최적 행동 학습<br><br>게시판에서 더 많은 정보를 찾아보세요!';
+    }
+
+    // 딥러닝
+    if (q.match(/(딥러닝|deep learning|dl이란)/)) {
+        return '<b>딥러닝(Deep Learning)</b>은 인공 신경망을 여러 층으로 쌓아 복잡한 패턴을 학습하는 머신러닝의 하위 분야입니다.<br><br>&#128218; <b>주요 아키텍처</b><br>- CNN: 이미지 처리<br>- RNN/LSTM: 시계열, 텍스트<br>- Transformer: NLP, 멀티모달<br>- GAN: 생성 모델';
+    }
+
+    // GPT / LLM
+    if (q.match(/(gpt|llm|대규모 언어|언어 모델|챗봇)/)) {
+        return '<b>LLM(Large Language Model)</b>은 대규모 텍스트 데이터로 학습된 언어 모델입니다.<br><br>&#128161; <b>대표 모델</b><br>- GPT (OpenAI)<br>- Claude (Anthropic)<br>- Gemini (Google)<br>- LLaMA (Meta)<br><br>자료실에서 관련 논문과 튜토리얼을 확인해보세요!';
+    }
+
+    // 파이썬
+    if (q.match(/(파이썬|python|프로그래밍|코딩)/)) {
+        return '<b>Python</b>은 AI/ML 분야에서 가장 많이 사용되는 프로그래밍 언어입니다.<br><br>&#128295; <b>주요 라이브러리</b><br>- NumPy, Pandas: 데이터 처리<br>- Scikit-learn: 머신러닝<br>- PyTorch, TensorFlow: 딥러닝<br>- Hugging Face: NLP 모델';
+    }
+
+    // 자료실
+    if (q.match(/(자료|리소스|다운로드|논문|튜토리얼|데이터셋)/)) {
+        if (resources.length === 0) return '아직 등록된 자료가 없습니다.';
+        let resp = `&#128194; <b>자료실</b>에 총 ${resources.length}개의 자료가 있습니다.<br><br>`;
+        const top = [...resources].sort((a, b) => b.downloads - a.downloads).slice(0, 3);
+        top.forEach((r, i) => {
+            resp += `${i + 1}. <b>${r.title}</b> [${r.fileType}]<br>&nbsp;&nbsp;&nbsp;다운로드 ${r.downloads}회<br>`;
+        });
+        resp += '<br>좌측 메뉴의 "자료실"에서 더 많은 자료를 확인하세요!';
+        return resp;
+    }
+
+    // 가입/로그인
+    if (q.match(/(가입|회원|로그인|계정)/)) {
+        return '좌측 하단의 <b>"로그인"</b> 버튼을 클릭하세요.<br><br>&#128100; 계정이 없다면 "회원가입" 링크를 눌러 새 계정을 만들 수 있습니다.<br><br>&#128273; 테스트 계정: <b>kim@ai.com</b> / 비밀번호: <b>1234</b>';
+    }
+
+    // Transformer
+    if (q.match(/(transformer|트랜스포머|어텐션|attention)/)) {
+        return '<b>Transformer</b>는 2017년 "Attention is All You Need" 논문에서 제안된 아키텍처입니다.<br><br>&#128161; <b>핵심 개념</b><br>- Self-Attention 메커니즘<br>- 위치 인코딩<br>- 멀티헤드 어텐션<br>- 인코더-디코더 구조<br><br>GPT, BERT, T5 등 현대 LLM의 기반입니다.';
+    }
+
+    // RAG
+    if (q.match(/(rag|검색 증강|retrieval)/)) {
+        return '<b>RAG(Retrieval-Augmented Generation)</b>는 외부 지식을 검색하여 LLM의 응답을 보강하는 기법입니다.<br><br>&#128218; <b>구성 요소</b><br>- 문서 임베딩 & 벡터 DB<br>- 유사도 검색<br>- LLM 프롬프트 증강<br><br>환각(Hallucination)을 줄이는 데 효과적입니다.';
+    }
+
+    // 감사
+    if (q.match(/(감사|고마|thanks|thank)/)) {
+        return '도움이 되었다니 기쁩니다! 언제든 궁금한 점이 있으면 물어보세요 &#128512;';
+    }
+
+    // 기본 응답
+    const defaults = [
+        '흥미로운 질문이네요! 게시판에서 다른 회원들과 함께 논의해보는 것은 어떨까요?',
+        '좀 더 구체적으로 질문해주시면 더 잘 도와드릴 수 있어요. 예를 들어 "머신러닝이란?", "추천 전자책" 등으로 물어보세요!',
+        '해당 주제에 대해서는 게시판이나 자료실에서 관련 정보를 찾아보시는 것을 추천합니다!',
+        'AI에 관한 다양한 질문을 해보세요! 머신러닝, 딥러닝, GPT, Transformer 등에 대해 답변해드릴 수 있어요.'
+    ];
+
+    return defaults[Math.floor(Math.random() * defaults.length)];
+}
+
 // ===== 초기화 =====
 document.addEventListener('DOMContentLoaded', () => {
     initData();
@@ -1371,5 +1528,6 @@ document.getElementById('authModal').addEventListener('click', function(e) {
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
         closeModal('authModal');
+        if (chatbotOpen) toggleChatbot();
     }
 });
