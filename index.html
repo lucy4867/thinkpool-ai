@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thinkpool AI - 인공지능 커뮤니티</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 사이드바 네비게이션 -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="logo-icon">&#9672;</span>
+                <span class="logo-text">Thinkpool AI</span>
+            </div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" data-page="home">
+                <span class="nav-icon">&#9750;</span>
+                <span class="nav-label">홈</span>
+            </li>
+            <li class="nav-item" data-page="community">
+                <span class="nav-icon">&#9997;</span>
+                <span class="nav-label">커뮤니티 게시판</span>
+            </li>
+            <li class="nav-item" data-page="ebook">
+                <span class="nav-icon">&#128214;</span>
+                <span class="nav-label">전자책 스토어</span>
+            </li>
+            <li class="nav-item" data-page="resources">
+                <span class="nav-icon">&#128194;</span>
+                <span class="nav-label">자료실</span>
+            </li>
+            <li class="nav-item" data-page="admin">
+                <span class="nav-icon">&#9881;</span>
+                <span class="nav-label">관리자</span>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="user-info">
+                <div class="user-avatar" id="userAvatar">G</div>
+                <div class="user-details">
+                    <span class="user-name" id="userName">게스트</span>
+                    <span class="user-role" id="userRole">방문자</span>
+                </div>
+            </div>
+            <button class="btn-login" id="btnAuth" onclick="toggleAuth()">로그인</button>
+        </div>
+    </nav>
+
+    <!-- 모바일 햄버거 -->
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()">&#9776;</button>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="main-content" id="mainContent">
+
+        <!-- ==================== 홈 페이지 ==================== -->
+        <section class="page active" id="page-home">
+            <div class="hero">
+                <div class="hero-content">
+                    <h1>Thinkpool AI에 오신 것을 환영합니다</h1>
+                    <p>인공지능 기술을 함께 탐구하고, 지식을 나누며, 미래를 만들어가는 커뮤니티</p>
+                    <div class="hero-buttons">
+                        <button class="btn btn-primary" onclick="navigateTo('community')">게시판 둘러보기</button>
+                        <button class="btn btn-outline" onclick="navigateTo('ebook')">전자책 스토어</button>
+                    </div>
+                </div>
+                <div class="hero-visual">
+                    <div class="hero-graphic">
+                        <div class="circle c1"></div>
+                        <div class="circle c2"></div>
+                        <div class="circle c3"></div>
+                        <div class="node n1"></div>
+                        <div class="node n2"></div>
+                        <div class="node n3"></div>
+                        <div class="node n4"></div>
+                        <div class="node n5"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-number" id="statMembers">0</span>
+                    <span class="stat-label">회원</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="statPosts">0</span>
+                    <span class="stat-label">게시글</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="statEbooks">0</span>
+                    <span class="stat-label">전자책</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number" id="statResources">0</span>
+                    <span class="stat-label">자료</span>
+                </div>
+            </div>
+
+            <div class="home-grid">
+                <div class="home-section">
+                    <div class="section-header">
+                        <h2>최근 게시글</h2>
+                        <a href="#" onclick="navigateTo('community'); return false;">전체보기 &rarr;</a>
+                    </div>
+                    <div class="post-list-mini" id="homeRecentPosts"></div>
+                </div>
+                <div class="home-section">
+                    <div class="section-header">
+                        <h2>인기 전자책</h2>
+                        <a href="#" onclick="navigateTo('ebook'); return false;">전체보기 &rarr;</a>
+                    </div>
+                    <div class="ebook-grid-mini" id="homePopularEbooks"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 커뮤니티 게시판 ==================== -->
+        <section class="page" id="page-community">
+            <div class="page-header">
+                <h1>커뮤니티 게시판</h1>
+                <button class="btn btn-primary" onclick="openWritePost()">글쓰기</button>
+            </div>
+
+            <div class="toolbar">
+                <div class="search-box">
+                    <input type="text" id="communitySearch" placeholder="게시글 검색..." oninput="filterPosts()">
+                </div>
+                <div class="filter-tabs">
+                    <button class="filter-btn active" data-category="all" onclick="filterPostCategory('all', this)">전체</button>
+                    <button class="filter-btn" data-category="질문" onclick="filterPostCategory('질문', this)">질문</button>
+                    <button class="filter-btn" data-category="정보" onclick="filterPostCategory('정보', this)">정보</button>
+                    <button class="filter-btn" data-category="토론" onclick="filterPostCategory('토론', this)">토론</button>
+                    <button class="filter-btn" data-category="프로젝트" onclick="filterPostCategory('프로젝트', this)">프로젝트</button>
+                </div>
+            </div>
+
+            <div class="post-list" id="postList"></div>
+
+            <div class="pagination" id="postPagination"></div>
+        </section>
+
+        <!-- 게시글 상세 보기 -->
+        <section class="page" id="page-post-detail">
+            <button class="btn btn-back" onclick="navigateTo('community')">&larr; 목록으로</button>
+            <article class="post-detail" id="postDetail"></article>
+            <div class="comments-section" id="commentsSection"></div>
+        </section>
+
+        <!-- 글쓰기 / 수정 -->
+        <section class="page" id="page-write-post">
+            <div class="page-header">
+                <h1 id="writePostTitle">글쓰기</h1>
+            </div>
+            <form class="write-form" id="writePostForm" onsubmit="submitPost(event)">
+                <input type="hidden" id="editPostId" value="">
+                <div class="form-group">
+                    <label>카테고리</label>
+                    <select id="postCategory" required>
+                        <option value="">선택하세요</option>
+                        <option value="질문">질문</option>
+                        <option value="정보">정보</option>
+                        <option value="토론">토론</option>
+                        <option value="프로젝트">프로젝트</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>제목</label>
+                    <input type="text" id="postTitleInput" placeholder="제목을 입력하세요" required>
+                </div>
+                <div class="form-group">
+                    <label>내용</label>
+                    <textarea id="postContent" rows="12" placeholder="내용을 입력하세요" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>태그 (쉼표로 구분)</label>
+                    <input type="text" id="postTags" placeholder="예: GPT, 딥러닝, 파이썬">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="navigateTo('community')">취소</button>
+                    <button type="submit" class="btn btn-primary">등록</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- ==================== 전자책 스토어 ==================== -->
+        <section class="page" id="page-ebook">
+            <div class="page-header">
+                <h1>전자책 스토어</h1>
+                <div class="cart-icon" onclick="openCart()">
+                    <span>&#128722;</span>
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <div class="search-box">
+                    <input type="text" id="ebookSearch" placeholder="전자책 검색..." oninput="filterEbooks()">
+                </div>
+                <div class="filter-tabs">
+                    <button class="filter-btn active" data-category="all" onclick="filterEbookCategory('all', this)">전체</button>
+                    <button class="filter-btn" data-category="머신러닝" onclick="filterEbookCategory('머신러닝', this)">머신러닝</button>
+                    <button class="filter-btn" data-category="딥러닝" onclick="filterEbookCategory('딥러닝', this)">딥러닝</button>
+                    <button class="filter-btn" data-category="NLP" onclick="filterEbookCategory('NLP', this)">NLP</button>
+                    <button class="filter-btn" data-category="컴퓨터비전" onclick="filterEbookCategory('컴퓨터비전', this)">컴퓨터비전</button>
+                </div>
+            </div>
+
+            <div class="ebook-grid" id="ebookGrid"></div>
+        </section>
+
+        <!-- 전자책 상세 -->
+        <section class="page" id="page-ebook-detail">
+            <button class="btn btn-back" onclick="navigateTo('ebook')">&larr; 스토어로</button>
+            <div class="ebook-detail" id="ebookDetail"></div>
+        </section>
+
+        <!-- 장바구니 -->
+        <section class="page" id="page-cart">
+            <div class="page-header">
+                <h1>장바구니</h1>
+            </div>
+            <button class="btn btn-back" onclick="navigateTo('ebook')">&larr; 스토어로</button>
+            <div class="cart-content" id="cartContent"></div>
+        </section>
+
+        <!-- ==================== 자료실 ==================== -->
+        <section class="page" id="page-resources">
+            <div class="page-header">
+                <h1>자료실</h1>
+                <button class="btn btn-primary" onclick="openUploadResource()">자료 업로드</button>
+            </div>
+
+            <div class="toolbar">
+                <div class="search-box">
+                    <input type="text" id="resourceSearch" placeholder="자료 검색..." oninput="filterResources()">
+                </div>
+                <div class="filter-tabs">
+                    <button class="filter-btn active" data-category="all" onclick="filterResourceCategory('all', this)">전체</button>
+                    <button class="filter-btn" data-category="논문" onclick="filterResourceCategory('논문', this)">논문</button>
+                    <button class="filter-btn" data-category="튜토리얼" onclick="filterResourceCategory('튜토리얼', this)">튜토리얼</button>
+                    <button class="filter-btn" data-category="데이터셋" onclick="filterResourceCategory('데이터셋', this)">데이터셋</button>
+                    <button class="filter-btn" data-category="코드" onclick="filterResourceCategory('코드', this)">코드</button>
+                </div>
+            </div>
+
+            <div class="resource-list" id="resourceList"></div>
+        </section>
+
+        <!-- 자료 업로드 -->
+        <section class="page" id="page-upload-resource">
+            <div class="page-header">
+                <h1 id="uploadResourceTitle">자료 업로드</h1>
+            </div>
+            <form class="write-form" id="uploadResourceForm" onsubmit="submitResource(event)">
+                <input type="hidden" id="editResourceId" value="">
+                <div class="form-group">
+                    <label>카테고리</label>
+                    <select id="resourceCategory" required>
+                        <option value="">선택하세요</option>
+                        <option value="논문">논문</option>
+                        <option value="튜토리얼">튜토리얼</option>
+                        <option value="데이터셋">데이터셋</option>
+                        <option value="코드">코드</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>제목</label>
+                    <input type="text" id="resourceTitleInput" placeholder="자료 제목" required>
+                </div>
+                <div class="form-group">
+                    <label>설명</label>
+                    <textarea id="resourceDesc" rows="5" placeholder="자료에 대한 설명" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>파일 형식</label>
+                    <select id="resourceFileType">
+                        <option value="PDF">PDF</option>
+                        <option value="ZIP">ZIP</option>
+                        <option value="PY">Python</option>
+                        <option value="IPYNB">Jupyter Notebook</option>
+                        <option value="CSV">CSV</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>파일 크기 (예: 2.5MB)</label>
+                    <input type="text" id="resourceFileSize" placeholder="2.5MB">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="navigateTo('resources')">취소</button>
+                    <button type="submit" class="btn btn-primary">등록</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- ==================== 관리자 페이지 ==================== -->
+        <section class="page" id="page-admin">
+            <div class="page-header">
+                <h1>관리자 대시보드</h1>
+            </div>
+
+            <div class="admin-lock" id="adminLock">
+                <div class="lock-icon">&#128274;</div>
+                <h2>관리자 인증이 필요합니다</h2>
+                <p>관리자 비밀번호를 입력하세요 (기본: admin)</p>
+                <div class="admin-login-form">
+                    <input type="password" id="adminPassword" placeholder="비밀번호">
+                    <button class="btn btn-primary" onclick="adminLogin()">인증</button>
+                </div>
+            </div>
+
+            <div class="admin-content" id="adminContent" style="display:none;">
+                <div class="admin-stats">
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-icon" style="background:#6c5ce7;">&#128100;</div>
+                        <div class="admin-stat-info">
+                            <span class="admin-stat-number" id="adminStatUsers">0</span>
+                            <span class="admin-stat-label">전체 회원</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-icon" style="background:#00b894;">&#9997;</div>
+                        <div class="admin-stat-info">
+                            <span class="admin-stat-number" id="adminStatPosts">0</span>
+                            <span class="admin-stat-label">전체 게시글</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-icon" style="background:#0984e3;">&#128214;</div>
+                        <div class="admin-stat-info">
+                            <span class="admin-stat-number" id="adminStatEbooks">0</span>
+                            <span class="admin-stat-label">전자책</span>
+                        </div>
+                    </div>
+                    <div class="admin-stat-card">
+                        <div class="admin-stat-icon" style="background:#e17055;">&#128194;</div>
+                        <div class="admin-stat-info">
+                            <span class="admin-stat-number" id="adminStatResources">0</span>
+                            <span class="admin-stat-label">자료</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="admin-tabs">
+                    <button class="admin-tab active" onclick="switchAdminTab('posts', this)">게시글 관리</button>
+                    <button class="admin-tab" onclick="switchAdminTab('ebooks', this)">전자책 관리</button>
+                    <button class="admin-tab" onclick="switchAdminTab('resources', this)">자료 관리</button>
+                    <button class="admin-tab" onclick="switchAdminTab('users', this)">회원 관리</button>
+                    <button class="admin-tab" onclick="switchAdminTab('settings', this)">사이트 설정</button>
+                </div>
+
+                <div class="admin-panel active" id="admin-posts">
+                    <div class="admin-panel-header">
+                        <h3>게시글 관리</h3>
+                    </div>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>제목</th>
+                                <th>작성자</th>
+                                <th>카테고리</th>
+                                <th>날짜</th>
+                                <th>조회</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminPostsBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="admin-panel" id="admin-ebooks">
+                    <div class="admin-panel-header">
+                        <h3>전자책 관리</h3>
+                        <button class="btn btn-primary btn-sm" onclick="openAdminEbookForm()">새 전자책 추가</button>
+                    </div>
+
+                    <div class="admin-ebook-form" id="adminEbookForm" style="display:none;">
+                        <form onsubmit="submitAdminEbook(event)">
+                            <input type="hidden" id="adminEbookId" value="">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>제목</label>
+                                    <input type="text" id="adminEbookTitle" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>저자</label>
+                                    <input type="text" id="adminEbookAuthor" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>카테고리</label>
+                                    <select id="adminEbookCategory" required>
+                                        <option value="머신러닝">머신러닝</option>
+                                        <option value="딥러닝">딥러닝</option>
+                                        <option value="NLP">NLP</option>
+                                        <option value="컴퓨터비전">컴퓨터비전</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>가격 (원)</label>
+                                    <input type="number" id="adminEbookPrice" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>설명</label>
+                                <textarea id="adminEbookDesc" rows="3" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>페이지 수</label>
+                                <input type="number" id="adminEbookPages" value="200">
+                            </div>
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-outline btn-sm" onclick="closeAdminEbookForm()">취소</button>
+                                <button type="submit" class="btn btn-primary btn-sm">저장</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>제목</th>
+                                <th>저자</th>
+                                <th>카테고리</th>
+                                <th>가격</th>
+                                <th>판매</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminEbooksBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="admin-panel" id="admin-resources">
+                    <div class="admin-panel-header">
+                        <h3>자료 관리</h3>
+                    </div>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>제목</th>
+                                <th>카테고리</th>
+                                <th>업로더</th>
+                                <th>다운로드</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminResourcesBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="admin-panel" id="admin-users">
+                    <div class="admin-panel-header">
+                        <h3>회원 관리</h3>
+                    </div>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>이름</th>
+                                <th>이메일</th>
+                                <th>가입일</th>
+                                <th>역할</th>
+                                <th>관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adminUsersBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="admin-panel" id="admin-settings">
+                    <div class="admin-panel-header">
+                        <h3>사이트 설정</h3>
+                    </div>
+                    <form class="settings-form" onsubmit="saveSettings(event)">
+                        <div class="form-group">
+                            <label>사이트 이름</label>
+                            <input type="text" id="settingSiteName" value="Thinkpool AI">
+                        </div>
+                        <div class="form-group">
+                            <label>사이트 설명</label>
+                            <textarea id="settingSiteDesc" rows="3">인공지능 기술을 함께 탐구하고, 지식을 나누며, 미래를 만들어가는 커뮤니티</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>관리자 비밀번호 변경</label>
+                            <input type="password" id="settingAdminPw" placeholder="새 비밀번호">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="settingAllowSignup" checked> 회원가입 허용
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="settingAllowGuest" checked> 게스트 글쓰기 허용
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">설정 저장</button>
+                    </form>
+
+                    <div class="danger-zone">
+                        <h4>데이터 관리</h4>
+                        <button class="btn btn-danger" onclick="resetAllData()">전체 데이터 초기화</button>
+                        <button class="btn btn-outline" onclick="exportData()">데이터 내보내기 (JSON)</button>
+                        <label class="btn btn-outline" style="cursor:pointer;">
+                            데이터 가져오기
+                            <input type="file" accept=".json" style="display:none" onchange="importData(event)">
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 모달 (로그인/회원가입) -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="authModalTitle">로그인</h2>
+                <button class="modal-close" onclick="closeModal('authModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="loginForm">
+                    <div class="form-group">
+                        <label>이메일</label>
+                        <input type="email" id="loginEmail" placeholder="이메일을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label>비밀번호</label>
+                        <input type="password" id="loginPassword" placeholder="비밀번호를 입력하세요">
+                    </div>
+                    <button class="btn btn-primary btn-full" onclick="login()">로그인</button>
+                    <p class="auth-switch">계정이 없으신가요? <a href="#" onclick="showSignup()">회원가입</a></p>
+                </div>
+                <div id="signupForm" style="display:none;">
+                    <div class="form-group">
+                        <label>이름</label>
+                        <input type="text" id="signupName" placeholder="이름을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label>이메일</label>
+                        <input type="email" id="signupEmail" placeholder="이메일을 입력하세요">
+                    </div>
+                    <div class="form-group">
+                        <label>비밀번호</label>
+                        <input type="password" id="signupPassword" placeholder="비밀번호를 입력하세요">
+                    </div>
+                    <button class="btn btn-primary btn-full" onclick="signup()">회원가입</button>
+                    <p class="auth-switch">이미 계정이 있으신가요? <a href="#" onclick="showLogin()">로그인</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 토스트 알림 -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
